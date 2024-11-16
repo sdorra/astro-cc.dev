@@ -1,0 +1,70 @@
+---
+import { allPosts } from "content-collections";
+import Layout from "src/layouts/Layout.astro";
+
+export function getStaticPaths() {
+  return allPosts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const post = allPosts.find((post) => post.slug === slug);
+if (!post) {
+  throw new Error(`No post found for slug: ${slug}`);
+}
+---
+
+<Layout title={post.title}>
+  <article class="post">
+    <header>
+      <h2>{post.title}</h2>
+    </header>
+    <div class="content" set:html={post.content} />
+    <footer>
+      <p>By {post.author}</p>
+      <time>{post.date}</time>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .post {
+    margin-top: 1rem;
+    max-width: 65ch;
+
+    header h2 {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+      font-weight: 700;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: var(--color-text-muted);
+    }
+  }
+
+  .content {
+    font-size: 1rem;
+    line-height: 1.75;
+
+    p {
+      margin-top: 1.25em;
+      margin-bottom: 1.25em;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.5em;
+      margin-top: 2em;
+      margin-bottom: 1em;
+      line-height: 1.3333333;
+    }
+  }
+</style>
